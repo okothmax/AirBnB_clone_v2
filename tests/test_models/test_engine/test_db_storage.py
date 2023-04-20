@@ -24,8 +24,7 @@ class TestDBStorage(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        """Test setup for DBstorage.
-        """
+        """Test setup for DBstorage."""
         if type(models.storage) == DBStorage:
             cls.storage = DBStorage()
             Base.metadata.create_all(cls.storage._DBStorage__engine)
@@ -49,8 +48,7 @@ class TestDBStorage(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """Test teardown of DB storage.
-        """
+        """Test teardown of DB storage."""
         if type(models.storage) == DBStorage:
             cls.storage._DBStorage__session.delete(cls.state)
             cls.storage._DBStorage__session.delete(cls.city)
