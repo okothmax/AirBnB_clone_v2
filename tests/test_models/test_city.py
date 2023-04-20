@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Defines unnittests for models/city.py."""
+"""Defining unnittests for city.py."""
 import os
 import pep8
 import models
@@ -17,14 +17,14 @@ from sqlalchemy.orm import sessionmaker
 
 
 class TestCity(unittest.TestCase):
-    """Unittests for testing the City class."""
+    """Unittests to test City class."""
 
     @classmethod
     def setUpClass(cls):
-        """City testing setup.
+        """Testing setup for City.
 
-        Temporarily renames any existing file.json.
-        Resets FileStorage objects dictionary.
+        Rename existing file.json temporarily.
+        FileStorage objects dictionary reset.
         Creates FileStorage, DBStorage, City and State instances for testing.
         """
         try:
@@ -33,8 +33,8 @@ class TestCity(unittest.TestCase):
             pass
         FileStorage._FileStorage__objects = {}
         cls.filestorage = FileStorage()
-        cls.state = State(name="California")
-        cls.city = City(name="San Francisco", state_id=cls.state.id)
+        cls.state = State(name="Arizona")
+        cls.city = City(name="Chicago", state_id=cls.state.id)
 
         if type(models.storage) == DBStorage:
             cls.dbstorage = DBStorage()
@@ -44,10 +44,10 @@ class TestCity(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """City testing teardown.
+        """Test teardown of city.
 
-        Restore original file.json.
-        Delete the FileStorage, DBStorage, City and State test instances.
+        Restoring orig file.json.
+        Delete instances of FileStorage, DBStorage, City and State.
         """
         try:
             os.remove("file.json")
@@ -65,17 +65,17 @@ class TestCity(unittest.TestCase):
             del cls.dbstorage
 
     def test_pep8(self):
-        """Test pep8 styling."""
+        """Pycodestyle testing."""
         style = pep8.StyleGuide(quiet=True)
         p = style.check_files(["models/city.py"])
         self.assertEqual(p.total_errors, 0, "fix pep8")
 
     def test_docstrings(self):
-        """Check for docstrings."""
+        """Docstrings check."""
         self.assertIsNotNone(City.__doc__)
 
     def test_attributes(self):
-        """Check for attributes."""
+        """Attributes check."""
         ct = City()
         self.assertEqual(str, type(ct.id))
         self.assertEqual(datetime, type(ct.created_at))
@@ -87,7 +87,7 @@ class TestCity(unittest.TestCase):
     @unittest.skipIf(type(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_nullable_attributes(self):
-        """Check that relevant DBStorage attributes are non-nullable."""
+        """Checking that relevant DBStorage attr are non-nullable."""
         with self.assertRaises(OperationalError):
             self.dbstorage._DBStorage__session.add(City(
                 state_id=self.state.id))
@@ -101,7 +101,7 @@ class TestCity(unittest.TestCase):
     @unittest.skipIf(type(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_state_relationship_deletes(self):
-        """Test delete cascade in City-State relationship."""
+        """Test delete cascade in relationship of City-State."""
         st = State(name="Georgia")
         self.dbstorage._DBStorage__session.add(st)
         self.dbstorage._DBStorage__session.commit()
@@ -120,29 +120,29 @@ class TestCity(unittest.TestCase):
         self.assertEqual(0, len(query))
 
     def test_is_subclass(self):
-        """Check that City is a subclass of BaseModel."""
+        """Checking City to be subclass of BaseModel."""
         self.assertTrue(issubclass(City, BaseModel))
 
     def test_init(self):
-        """Test initialization."""
+        """Init testing."""
         self.assertIsInstance(self.city, City)
 
     def test_two_models_are_unique(self):
-        """Test that different City instances are unique."""
+        """Testing uniqueness of different instances of City."""
         ct = City()
         self.assertNotEqual(self.city.id, ct.id)
         self.assertLess(self.city.created_at, ct.created_at)
         self.assertLess(self.city.updated_at, ct.updated_at)
 
     def test_init_args_kwargs(self):
-        """Test initialization with args and kwargs."""
+        """Args and kwargs to test init."""
         dt = datetime.utcnow()
-        ct = City("1", id="5", created_at=dt.isoformat())
-        self.assertEqual(ct.id, "5")
+        ct = City("1", id="9", created_at=dt.isoformat())
+        self.assertEqual(ct.id, "9")
         self.assertEqual(ct.created_at, dt)
 
     def test_str(self):
-        """Test __str__ representation."""
+        """Testing __str__ repr."""
         s = self.city.__str__()
         self.assertIn("[City] ({})".format(self.city.id), s)
         self.assertIn("'id': '{}'".format(self.city.id), s)
@@ -156,7 +156,7 @@ class TestCity(unittest.TestCase):
     @unittest.skipIf(type(models.storage) == DBStorage,
                      "Testing DBStorage")
     def test_save_filestorage(self):
-        """Test save method with FileStorage."""
+        """Test save using FileStorage."""
         old = self.city.updated_at
         self.city.save()
         self.assertLess(old, self.city.updated_at)
@@ -166,7 +166,7 @@ class TestCity(unittest.TestCase):
     @unittest.skipIf(type(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_save_dbstorage(self):
-        """Test save method with DBStorage."""
+        """Using DBStorage to test save method."""
         old = self.city.updated_at
         self.state.save()
         self.city.save()
@@ -185,7 +185,7 @@ class TestCity(unittest.TestCase):
         cursor.close()
 
     def test_to_dict(self):
-        """Test to_dict method."""
+        """Testing mehtod to_dict."""
         city_dict = self.city.to_dict()
         self.assertEqual(dict, type(city_dict))
         self.assertEqual(self.city.id, city_dict["id"])

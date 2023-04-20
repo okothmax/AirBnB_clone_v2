@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Defines unnittests for models/review.py."""
+"""Defining unnittests for review.py."""
 import os
 import pep8
 import models
@@ -20,14 +20,14 @@ from sqlalchemy.orm import sessionmaker
 
 
 class TestReview(unittest.TestCase):
-    """Unittests for testing the Review class."""
+    """Unittests to test Review class."""
 
     @classmethod
     def setUpClass(cls):
-        """Review testing setup.
-        Temporarily renames any existing file.json.
+        """Testing review setup.
+        Renames any existing file.json. temporarily
         Resets FileStorage objects dictionary.
-        Creates FileStorage, DBStorage and Review instances for testing.
+        Create instances of FileStorage, DBStorage and Review to test.
         """
         try:
             os.rename("file.json", "tmp")
@@ -35,12 +35,12 @@ class TestReview(unittest.TestCase):
             pass
         FileStorage._FileStorage__objects = {}
         cls.filestorage = FileStorage()
-        cls.state = State(name="California")
-        cls.city = City(name="San Francisco", state_id=cls.state.id)
-        cls.user = User(email="poppy@holberton.com", password="betty98")
+        cls.state = State(name="Montana")
+        cls.city = City(name="Denver", state_id=cls.state.id)
+        cls.user = User(email="alvinot@gmail.com", password="betty98")
         cls.place = Place(city_id=cls.city.id, user_id=cls.user.id,
-                          name="Betty")
-        cls.review = Review(text="stellar", place_id=cls.place.id,
+                          name="Beatrice")
+        cls.review = Review(text="interstellar", place_id=cls.place.id,
                             user_id=cls.user.id)
 
         if type(models.storage) == DBStorage:
@@ -51,7 +51,7 @@ class TestReview(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """Review testing teardown.
+        """Test teardown review.
         Restore original file.json.
         Delete the FileStorage, DBStorage and Review test instances.
         """
@@ -74,17 +74,17 @@ class TestReview(unittest.TestCase):
             del cls.dbstorage
 
     def test_pep8(self):
-        """Test pep8 styling."""
+        """Pycodestyle tests."""
         style = pep8.StyleGuide(quiet=True)
         p = style.check_files(["models/review.py"])
         self.assertEqual(p.total_errors, 0, "fix pep8")
 
     def test_docstrings(self):
-        """Check for docstrings."""
+        """Docstrings check."""
         self.assertIsNotNone(Review.__doc__)
 
     def test_attributes(self):
-        """Check for attributes."""
+        """Attributes check."""
         us = Review(email="a", password="a")
         self.assertEqual(str, type(us.id))
         self.assertEqual(datetime, type(us.created_at))
@@ -97,7 +97,7 @@ class TestReview(unittest.TestCase):
     @unittest.skipIf(type(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_nullable_attributes(self):
-        """Test that email attribute is non-nullable."""
+        """Testing if email attribute is non-nullable."""
         with self.assertRaises(OperationalError):
             self.dbstorage._DBStorage__session.add(Review(
                 place_id=self.place.id, user_id=self.user.id))
@@ -114,29 +114,29 @@ class TestReview(unittest.TestCase):
             self.dbstorage._DBStorage__session.commit()
 
     def test_is_subclass(self):
-        """Check that Review is a subclass of BaseModel."""
+        """Checking Review as a subclass of BaseModel."""
         self.assertTrue(issubclass(Review, BaseModel))
 
     def test_init(self):
-        """Test initialization."""
+        """Testing init."""
         self.assertIsInstance(self.review, Review)
 
     def test_two_models_are_unique(self):
-        """Test that different Review instances are unique."""
+        """Testing uniqueness in instances of different Review."""
         us = Review(email="a", password="a")
         self.assertNotEqual(self.review.id, us.id)
         self.assertLess(self.review.created_at, us.created_at)
         self.assertLess(self.review.updated_at, us.updated_at)
 
     def test_init_args_kwargs(self):
-        """Test initialization with args and kwargs."""
+        """Args and kwargs to test init."""
         dt = datetime.utcnow()
-        st = Review("1", id="5", created_at=dt.isoformat())
-        self.assertEqual(st.id, "5")
+        st = Review("1", id="9", created_at=dt.isoformat())
+        self.assertEqual(st.id, "9")
         self.assertEqual(st.created_at, dt)
 
     def test_str(self):
-        """Test __str__ representation."""
+        """Testing __str__ repr."""
         s = self.review.__str__()
         self.assertIn("[Review] ({})".format(self.review.id), s)
         self.assertIn("'id': '{}'".format(self.review.id), s)
@@ -151,7 +151,7 @@ class TestReview(unittest.TestCase):
     @unittest.skipIf(type(models.storage) == DBStorage,
                      "Testing DBStorage")
     def test_save_filestorage(self):
-        """Test save method with FileStorage."""
+        """Testing save with FileStorage."""
         old = self.review.updated_at
         self.review.save()
         self.assertLess(old, self.review.updated_at)
@@ -161,7 +161,7 @@ class TestReview(unittest.TestCase):
     @unittest.skipIf(type(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_save_dbstorage(self):
-        """Test save method with DBStorage."""
+        """Testing save with DBStorage."""
         old = self.review.updated_at
         self.state.save()
         self.city.save()
@@ -183,7 +183,7 @@ class TestReview(unittest.TestCase):
         cursor.close()
 
     def test_to_dict(self):
-        """Test to_dict method."""
+        """Testing method to_dict."""
         review_dict = self.review.to_dict()
         self.assertEqual(dict, type(review_dict))
         self.assertEqual(self.review.id, review_dict["id"])
