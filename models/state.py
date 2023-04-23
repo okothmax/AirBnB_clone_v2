@@ -1,34 +1,35 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
+"""This is state class"""
+from sqlalchemy.ext.declarative import declarative_base
 from models.base_model import BaseModel, Base
-from models.city import City
-from sqlalchemy import Column
-from sqlalchemy import String
-import models
-from os import getenv
 from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String
+import models
+from models.city import City
+import shlex
 
 
 class State(BaseModel, Base):
-    """ State class 
-    Inherits from SQLAlchemy Base and links the MySQL table states.
-
-    Attributes:
-        __tablename__ (str): name of the MySQL table to store States.
-        name (sqlalchemy String): name of the State.
-        cities (sqlalchemy relationship): State-City relationship.
+    """This is class for State
+    Attribute:
+        name: input name
     """
-    __table__ = "states"
-    name = Column(String(128), nullable = False)
-    cities = relationship("City",  backref="state", cascade="delete")
+    __tablename__ = "states"
+    name = Column(String(128), nullable=False)
+    cities = relationship("City", cascade='all, delete, delete-orphan',
+                          backref="state")
 
-    if getenv("HBNB_TYPE_STORAGE") != "db":
-        @property
-        def cities(self):
-            """Get a list of all related City objects."""
-            city_list = []
-            for city in list(models.storage.all(City).values()):
-                if city.state_id == self.id:
-                    city_list.append(city)
-            return city_list
-
+    @property
+    def cities(self):
+        var = models.storage.all()
+        lista = []
+        result = []
+        for key in var:
+            city = key.replace('.', ' ')
+            city = shlex.split(city)
+            if (city[0] == 'City'):
+                lista.append(var[key])
+        for elem in lista:
+            if (elem.state_id == self.id):
+                result.append(elem)
+        return (result)
