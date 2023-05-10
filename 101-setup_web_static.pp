@@ -14,7 +14,7 @@ $nginx_conf = "server {
     }
 
     location /redirect_me {
-        return 301 http://cuberule.com/;
+        return 301 http://youtube.com/;
     }
 
     error_page 404 /404.html;
@@ -51,7 +51,7 @@ file { '/data/web_static/shared':
 
 file { '/data/web_static/releases/test/index.html':
   ensure  => 'present',
-  content => "Holberton School Puppet\n"
+  content => "Hello World! Puppet\n"
 } ->
 
 file { '/data/web_static/current':
